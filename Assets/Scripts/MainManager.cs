@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static DataManager;
 
 public class MainManager : MonoBehaviour
 {
@@ -18,10 +19,14 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+    public Text PlayerHighScoreName;
+ 
+
+
     // Start is called before the first frame update
     void Start()
     {
+        UpdateHighScoreText();
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -36,6 +41,13 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        if(DataManager.Instance != null)
+        {
+            SetUserName(DataManager.Instance.playerName);
+        }
+
+    
     }
 
     private void Update()
@@ -72,5 +84,55 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        SaveCurrentScore(m_Points);
+        UpdateHighScoreText();
+            
+
+
     }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    void SetUserName(string username)
+    {
+        if(DataManager.Instance != null)
+        {
+            string playerName = DataManager.Instance.playerName;
+            Debug.Log("Player Name: " + playerName);
+        }
+
+    }
+
+    void SaveCurrentScore(int score)
+    {
+            if(DataManager.Instance != null)
+            {
+                DataManager.Instance.SubmitScore(score);
+            }
+    }
+
+    void UpdateHighScoreText()
+    {
+        if (DataManager.Instance != null)
+        {
+            string name = DataManager.Instance.HighestPlayerName;
+            int score = DataManager.Instance.HighestScore;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                PlayerHighScoreName.text = $"Best Score : {name} : {score}";
+            }
+            else
+            {
+                PlayerHighScoreName.text = "Best Score : None";
+            }
+        }
+    }
+
+
+
+
 }
