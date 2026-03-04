@@ -69,9 +69,11 @@ public class DataManager : MonoBehaviour
 
             players.Add(newPlayer);
 
-            UpdateHighScore();
-            SaveData();
+            
         }
+
+        UpdateHighScore();
+        SaveData();
     }
 
     private void UpdateHighScore()
@@ -152,6 +154,13 @@ public class DataManager : MonoBehaviour
         {
             File.Delete(savePath);
         }
+    }
+
+    public List<PlayerRecord> GetPlayerSortedByRecords()
+    {
+        List<PlayerRecord> sortedList = new List<PlayerRecord>(players);
+        sortedList.Sort((a, b) => b.score.CompareTo(a.score)); // Sort descending by score
+        return sortedList;
     }
 
 
